@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Đào tạo Trực tuyến E-Learning | Thép Hòa Phát Dung Quất (HPDQ)</title>
+    <!-- Google Fonts: Be Vietnam Pro & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Interactive Data Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        hp: {
+                            dark: '#00264D',
+                            navy: '#003B73',
+                            blue: '#004B8D',
+                            cyan: '#00A8E8',
+                            light: '#E6F6FD',
+                            surface: '#F4F7FA'
+                        }
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 59, 115, 0.08)',
+                        'card': '0 10px 30px -5px rgba(0, 59, 115, 0.07)',
+                        'card-hover': '0 20px 40px -10px rgba(0, 59, 115, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFFFFF;
+            color: #1E293B;
+            overflow-x: hidden;
+        }
+        /* Custom Industrial Grid Background */
+        .bg-industrial-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        .bg-light-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 59, 115, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 59, 115, 0.04) 1px, transparent 1px);
+        }
+        /* Glassmorphism Utilities */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glass-dark {
+            background: rgba(0, 38, 77, 0.72);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4F7FA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #004B8D;
+        }
+        /* Smooth Tab & Card Transitions */
+        .tab-content {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Pulsing flow line */
+        @keyframes flowDash {
+            to { stroke-dashoffset: -24; }
+        }
+        .animate-flow {
+            stroke-dasharray: 6 6;
+            animation: flowDash 1s linear infinite;
+        }
+
+        /* ===== Chapter tabs ===== */
+        .chapter-section { display: none; }
+        .chapter-section.is-active { display: block; animation: fadeIn 0.45s ease-out both; }
+        #chapter-tabs { top: 64px; }
+        @media (min-width: 768px) { #chapter-tabs { top: 80px; } }
+        .chapter-tab { position: relative; display: flex; align-items: center; gap: .625rem; flex: 1 1 0; min-width: max-content;
+            padding: .875rem 1rem; font-size: .8125rem; font-weight: 600; color: #64748B; white-space: nowrap;
+            border-bottom: 3px solid transparent; transition: color .2s, background .2s, border-color .2s; }
+        .chapter-tab .num { display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem;
+            border-radius: 9999px; background: #F1F5F9; color: #475569; font-size: .75rem; font-weight: 800; transition: all .2s; }
+        .chapter-tab:hover { color: #003B73; background: #F4F7FA; }
+        .chapter-tab.is-active { color: #003B73; border-bottom-color: #00A8E8; background: linear-gradient(to top, rgba(0,168,232,.08), transparent); }
+        .chapter-tab.is-active .num { background: #003B73; color: #fff; box-shadow: 0 4px 10px rgba(0,59,115,.3); }
+        .nav-link.is-active { color: #003B73; background: #E6F6FD; }
+        .mobile-nav-link.is-active { color: #003B73; background: #E6F6FD; }
+        #chapter-progress { transition: width .45s ease; }
+        .pager-card { display: flex; flex-direction: column; gap: .25rem; padding: 1.1rem 1.4rem; border-radius: 1rem; background: #fff;
+            border: 1px solid #E2E8F0; box-shadow: 0 10px 30px -5px rgba(0,59,115,.07); transition: all .25s; cursor: pointer; text-align: left; }
+        .pager-card:hover { transform: translateY(-3px); border-color: #00A8E8; box-shadow: 0 20px 40px -10px rgba(0,59,115,.18); }
+        .pager-card.next { align-items: flex-end; text-align: right; background: linear-gradient(135deg,#003B73,#004B8D); border-color: transparent; color: #fff; }
+        .pager-card.next .lbl { color: #7DD3FC; }
+        .tabs-scroll { scrollbar-width: none; }
+        .tabs-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-hp-cyan selection:text-white">
+
+    <!-- ==================== STICKY NAVBAR ==================== -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-200/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <!-- Brand Logo: Hòa Phát Gang Thép (Custom SVG) -->
+                <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
+                    <div class="flex items-center">
+                        <!-- Hòa Phát 3-Triangle Interlocking Symbol + Typography -->
+                        <img src="data:image/png;base64,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" alt="Hòa Phát Gang Thép" class="h-9 sm:h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation (6 Chapters) -->
+                <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2">
+                    <a href="#chuong-1" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">01. Hành trình</a>
+                    <a href="#chuong-2" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">02. Phân hệ</a>
+                    <a href="#chuong-3" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">03. Trải nghiệm</a>
+                    <a href="#chuong-4" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">04. Dashboard</a>
+                    <a href="#chuong-5" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">05. Công nghệ</a>
+                    <a href="#chuong-6" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-hp-navy hover:bg-hp-surface transition">06. Nhân rộng</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="hidden sm:flex items-center gap-2.5">
+                    <a href="#chuong-3" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-hp-navy to-hp-blue hover:from-hp-blue hover:to-hp-cyan shadow-md hover:shadow-lg transition-all duration-200">
+                        <i data-lucide="monitor-play" class="w-4 h-4"></i>
+                        <span>Demo Hệ thống</span>
+                    </a>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="flex lg:hidden">
+                    <button id="mobile-menu-btn" type="button" class="p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none" aria-label="Mở menu">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-5 space-y-1 shadow-xl">
+            <a href="#chuong-1" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 01: Bối cảnh & Hành trình phát triển</a>
+            <a href="#chuong-2" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 02: Kết nối & 07 Phân hệ (28 Chức năng)</a>
+            <a href="#chuong-3" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 03: Vận hành & Trải nghiệm Đa nền tảng</a>
+            <a href="#chuong-4" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 04: Dashboard & Báo cáo Quản trị</a>
+            <a href="#chuong-5" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 05: Kiến trúc Công nghệ & Hạ tầng</a>
+            <a href="#chuong-6" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-hp-surface hover:text-hp-navy">Chương 06: Bài học kinh nghiệm & Nhân rộng</a>
+            <div class="pt-3 border-t border-slate-100">
+                <a href="#chuong-3" class="mobile-nav-link flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-bold text-white bg-hp-navy">
+                    <i data-lucide="monitor-play" class="w-4 h-4"></i>
+                    <span>Trải nghiệm Giao diện Demo</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HERO SECTION (TRANG 1) ==================== -->
+    <section id="hero" class="relative pt-24 pb-20 md:pt-32 md:pb-28 bg-gradient-to-br from-hp-dark via-hp-navy to-hp-blue text-white overflow-hidden">
+        <!-- Decorative Industrial Grid & Glowing Orbs -->
+        <div class="absolute inset-0 bg-industrial-grid pointer-events-none"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-hp-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 left-10 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Subtle Industrial Steel Complex SVG Silhouette on Bottom Right -->
+        <svg class="absolute bottom-0 right-0 w-full max-w-4xl opacity-10 pointer-events-none" viewBox="0 0 800 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 220V140H110V90H140V140H190V70H230V140H290V110H360V140H410V50H445V140H510V85H570V140H630V60H665V140H750V220H50Z" fill="#00A8E8"/>
+            <rect x="120" y="40" width="12" height="50" fill="#FFFFFF"/>
+            <rect x="422" y="15" width="14" height="35" fill="#FFFFFF"/>
+            <rect x="642" y="25" width="14" height="35" fill="#FFFFFF"/>
+            <path d="M0 215H800V220H0V215Z" fill="#FFFFFF"/>
+        </svg>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+                <!-- Left Column: Title, Subtitle, Slogan, CTA -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Badge -->
+                    <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full glass-dark text-xs sm:text-sm font-semibold text-hp-cyan tracking-wide">
+                        <span class="w-2 h-2 rounded-full bg-hp-cyan animate-ping"></span>
+                        <span>CÔNG TY CP THÉP HÒA PHÁT DUNG QUẤT (HPDQ)</span>
+                    </div>
+
+                    <!-- Slogan Pill -->
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-md bg-hp-cyan text-hp-dark font-extrabold text-xs sm:text-sm tracking-widest uppercase shadow-sm">
+                            TRI THỨC LÀ SỨC MẠNH
+                        </span>
+                        <span class="text-blue-200 text-xs sm:text-sm font-medium">Chuyển đổi số Đào tạo & Phát triển Nhân lực</span>
+                    </div>
+
+                    <!-- Main Title -->
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.15] tracking-tight">
+                        HỆ THỐNG ĐÀO TẠO TRỰC TUYẾN <span class="text-transparent bg-clip-text bg-gradient-to-r from-hp-cyan to-sky-300">E-LEARNING</span>
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="text-base sm:text-lg md:text-xl text-blue-100/90 leading-relaxed max-w-2xl font-normal">
+                        Quá trình hình thành – Phát triển – Vận hành và ứng dụng thực tế tại Khu liên hợp Sản xuất Gang thép Hòa Phát Dung Quất.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#chuong-1" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-hp-cyan hover:bg-sky-400 text-hp-dark font-bold text-sm sm:text-base shadow-lg shadow-hp-cyan/25 transition-all duration-200">
+                            <span>Khám phá 06 Chương</span>
+                            <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#chuong-4" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl glass-dark hover:bg-white/15 text-white font-semibold text-sm sm:text-base transition-all duration-200">
+                            <i data-lucide="bar-chart-3" class="w-5 h-5 text-hp-cyan"></i>
+                            <span>Xem Số liệu Vận hành 2026</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual System Preview Card -->
+                <div class="lg:col-span-5">
+                    <div class="glass-dark rounded-2xl p-5 sm:p-6 shadow-2xl border border-white/15 space-y-5">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-400"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="ml-2 text-xs font-semibold text-blue-200 tracking-wider uppercase">E-LEARNING PORTAL · HPDQ</span>
+                            </div>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-medium">Đang vận hành</span>
+                        </div>
+
+                        <!-- Mini Visual Highlight -->
+                        <div class="bg-gradient-to-r from-hp-blue/80 to-hp-navy/90 rounded-xl p-4 border border-white/10">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-hp-cyan uppercase tracking-wider">Quy mô phục vụ toàn khu liên hợp</span>
+                                <i data-lucide="shield-check" class="w-5 h-5 text-hp-cyan"></i>
+                            </div>
+                            <p class="text-sm text-blue-100 leading-relaxed">
+                                Quản trị tập trung xuyên suốt vòng đời đào tạo từ <strong class="text-white">Nhu cầu (QT.04)</strong>, <strong class="text-white">Đánh giá Khung năng lực (KNL)</strong> đến <strong class="text-white">Hồ sơ đào tạo số</strong> trên Web & Mobile App.
+                            </p>
+                        </div>
+
+                        <!-- Quick Stats inside Hero Card -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                                <div class="text-xs text-blue-200 mb-1">Ngân hàng câu hỏi</div>
+                                <div class="text-xl sm:text-2xl font-extrabold text-white">24.463+</div>
+                                <div class="text-[11px] text-hp-cyan mt-0.5">1.967+ Bộ đề thi</div>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                                <div class="text-xs text-blue-200 mb-1">Truy cập hằng tháng</div>
+                                <div class="text-xl sm:text-2xl font-extrabold text-white">~100.000</div>
+                                <div class="text-[11px] text-emerald-300 mt-0.5">Web & Mobile App</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-blue-200/80 pt-1">
+                            <span>Triển khai bởi: <strong class="text-white">P. CNTT & Chuyển đổi số</strong></span>
+                            <span>Cập nhật: 11/2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Key Highlight Metric Cards Below Hero -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12 md:mt-16">
+                <!-- Stat 1 -->
+                <div class="bg-white text-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-100 flex items-start justify-between group hover:-translate-y-1 transition-all duration-300">
+                    <div>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider">Học viên</p>
+                        <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-hp-navy mt-1.5 counter" data-target="17128">17.128+</p>
+                        <p class="text-xs text-emerald-600 font-medium mt-1.5 flex items-center gap-1">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i> Toàn thể CBNV HPDQ
+                        </p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-hp-light text-hp-navy group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="bg-white text-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-100 flex items-start justify-between group hover:-translate-y-1 transition-all duration-300">
+                    <div>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider">Lớp học</p>
+                        <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-hp-navy mt-1.5 counter" data-target="8213">8.213+</p>
+                        <p class="text-xs text-hp-blue font-medium mt-1.5 flex items-center gap-1">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i> Đa phương thức tổ chức
+                        </p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-hp-light text-hp-navy group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                        <i data-lucide="presentation" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="bg-white text-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-100 flex items-start justify-between group hover:-translate-y-1 transition-all duration-300">
+                    <div>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider">Lượt đào tạo</p>
+                        <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-hp-navy mt-1.5 counter" data-target="752843">752.843+</p>
+                        <p class="text-xs text-sky-600 font-medium mt-1.5 flex items-center gap-1">
+                            <i data-lucide="activity" class="w-3.5 h-3.5"></i> Dữ liệu lũy kế tập trung
+                        </p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-hp-light text-hp-navy group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                        <i data-lucide="database" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="bg-white text-slate-900 rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-100 flex items-start justify-between group hover:-translate-y-1 transition-all duration-300">
+                    <div>
+                        <p class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider">Tỷ lệ hoàn thành</p>
+                        <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-hp-cyan mt-1.5">76%</p>
+                        <p class="text-xs text-slate-500 font-medium mt-1.5 flex items-center gap-1">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500"></i> Kiểm soát tiến độ tự động
+                        </p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-hp-light text-hp-cyan group-hover:bg-hp-cyan group-hover:text-white transition-colors">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== THANH CHUYỂN CHƯƠNG ==================== -->
+    <div id="chapter-tabs" class="sticky z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div id="chapter-tabs-list" class="tabs-scroll flex overflow-x-auto" role="tablist"></div>
+        </div>
+        <div class="h-0.5 bg-slate-100"><div id="chapter-progress" class="h-full bg-gradient-to-r from-hp-navy to-hp-cyan" style="width:16.66%"></div></div>
+    </div>
+    <div id="chapters-anchor"></div>
+
+
+    <!-- ==================== CHƯƠNG 01: BỐI CẢNH, HÀNH TRÌNH & HỆ SINH THÁI (TRANG 2-6) ==================== -->
+    <section id="chuong-1" data-chapter="1" class="chapter-section py-20 md:py-28 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="max-w-3xl mb-14">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-hp-light text-hp-navy text-xs font-bold uppercase tracking-wider mb-3">
+                    <span>Chương 01</span>
+                    <span>•</span>
+                    <span>Hình thành & Phát triển</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Từ nhu cầu quản lý đào tạo đến giải pháp số hóa toàn diện
+                </h2>
+                <p class="text-slate-600 text-base sm:text-lg mt-3 leading-relaxed">
+                    E-Learning HPDQ không chỉ là nền tảng bài giảng trực tuyến, mà là hệ thống quản trị hoạt động đào tạo tập trung, xuyên suốt và có khả năng khai thác dữ liệu quản trị.
+                </p>
+            </div>
+
+            <!-- 1.1 Interactive Toggle / Split View: Trước & Sau khi số hóa -->
+            <div class="mb-20">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-hp-navy text-white flex items-center justify-center text-sm font-bold">01</span>
+                        <span>Chuyển dịch mô hình quản trị đào tạo</span>
+                    </h3>
+                    <!-- View Mode Switcher for Mobile/Desktop -->
+                    <div class="inline-flex p-1 rounded-xl bg-hp-surface border border-slate-200 self-start">
+                        <button onclick="setDigitizationView('split')" id="btn-view-split" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-hp-navy text-white shadow-sm transition">So sánh song song</button>
+                        <button onclick="setDigitizationView('before')" id="btn-view-before" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-hp-navy transition">Trước số hóa</button>
+                        <button onclick="setDigitizationView('after')" id="btn-view-after" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-hp-navy transition">Định hướng số hóa</button>
+                    </div>
+                </div>
+
+                <div id="digitization-container" class="grid md:grid-cols-2 gap-6 lg:gap-8">
+                    <!-- Before Card -->
+                    <div id="card-before" class="rounded-2xl p-6 sm:p-8 bg-slate-50 border border-slate-200/90 relative overflow-hidden transition-all duration-300">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                                    <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">Bối cảnh cũ</span>
+                                    <h4 class="text-lg font-extrabold text-slate-900">Trước khi số hóa</h4>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100/80 text-amber-800">Rời rạc · Thủ công</span>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                                <span class="text-slate-700 text-sm sm:text-base">Dữ liệu đào tạo phân tán ở nhiều nguồn, file Excel và hồ sơ giấy tại các bộ phận.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                                <span class="text-slate-700 text-sm sm:text-base">Công tác tổng hợp, thống kê phụ thuộc nhiều vào thao tác thủ công, tốn thời gian.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                                <span class="text-slate-700 text-sm sm:text-base">Khó theo dõi tập trung lịch sử học tập và quá trình phát triển của từng nhân viên.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                                <span class="text-slate-700 text-sm sm:text-base">Kiểm soát tiến độ, kết quả thi và minh chứng đào tạo còn nhiều thao tác rời rạc.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="x-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                                <span class="text-slate-700 text-sm sm:text-base">Khó khai thác dữ liệu tức thời phục vụ báo cáo quản trị và ra quyết định.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- After Card -->
+                    <div id="card-after" class="rounded-2xl p-6 sm:p-8 bg-gradient-to-br from-hp-navy to-hp-blue text-white shadow-xl relative overflow-hidden transition-all duration-300">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-hp-cyan/15 rounded-full blur-2xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-6 relative">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-hp-cyan/20 text-hp-cyan border border-hp-cyan/30 flex items-center justify-center">
+                                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-hp-cyan uppercase tracking-wider">Giải pháp HPDQ</span>
+                                    <h4 class="text-lg font-extrabold text-white">Định hướng xây dựng hệ thống</h4>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-hp-cyan text-hp-dark">Tập trung · Liên thông</span>
+                        </div>
+                        <ul class="space-y-4 relative">
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-hp-cyan shrink-0 mt-0.5"></i>
+                                <span class="text-blue-50 text-sm sm:text-base">Số hóa toàn diện quy trình quản lý đào tạo theo chuẩn nghiệp vụ nội bộ.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-hp-cyan shrink-0 mt-0.5"></i>
+                                <span class="text-blue-50 text-sm sm:text-base">Tập trung toàn bộ dữ liệu đào tạo, bài giảng, đề thi về một hệ thống duy nhất.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-hp-cyan shrink-0 mt-0.5"></i>
+                                <span class="text-blue-50 text-sm sm:text-base">Quản lý xuyên suốt vòng đời từ lập nhu cầu đào tạo đến lưu trữ hồ sơ số.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-hp-cyan shrink-0 mt-0.5"></i>
+                                <span class="text-blue-50 text-sm sm:text-base">Theo dõi tự động tiến độ, kết quả thi và lịch sử học tập từng CBNV.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-hp-cyan shrink-0 mt-0.5"></i>
+                                <span class="text-blue-50 text-sm sm:text-base">Tăng cường khả năng tổng hợp, trực quan hóa và phân tích dữ liệu quản trị.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.2 Interactive Timeline Hành trình phát triển (2021 - 2026) -->
+            <div class="mb-20 bg-hp-surface rounded-3xl p-6 sm:p-10 border border-slate-200/80">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-hp-navy text-white flex items-center justify-center text-sm font-bold">02</span>
+                            <span>Hành trình phát triển E-Learning HPDQ (2021 – 2026)</span>
+                        </h3>
+                        <p class="text-slate-600 text-sm sm:text-base mt-1.5">Bấm vào từng cột mốc để xem chi tiết bước tiến công nghệ và nghiệp vụ.</p>
+                    </div>
+                    <span class="text-xs font-semibold text-hp-navy bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
+                        6 Giai đoạn chuyển mình liên tục
+                    </span>
+                </div>
+
+                <!-- Timeline Selector Buttons -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8" id="timeline-buttons">
+                    <!-- Rendered via JS -->
+                </div>
+
+                <!-- Timeline Detail Display Panel -->
+                <div id="timeline-detail" class="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-slate-100 transition-all duration-300">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- 1.3 4 Trụ cột Hệ sinh thái quản lý & tổ chức đào tạo -->
+            <div>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2.5 mb-8">
+                    <span class="w-8 h-8 rounded-lg bg-hp-navy text-white flex items-center justify-center text-sm font-bold">03</span>
+                    <span>04 Trụ cột Hệ sinh thái quản lý và tổ chức đào tạo</span>
+                </h3>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Pillar 01 -->
+                    <div class="rounded-2xl p-6 bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover hover:border-hp-cyan transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="text-3xl font-extrabold text-hp-light group-hover:text-hp-cyan/25 transition-colors">01</span>
+                            <div class="w-12 h-12 rounded-xl bg-hp-light text-hp-navy flex items-center justify-center group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                                <i data-lucide="book-open-check" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-3">Nội dung & Học tập</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Quản lý nội dung đào tạo</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Lớp học, lịch sử học tập</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Theo dõi kết quả học tập</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pillar 02 -->
+                    <div class="rounded-2xl p-6 bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover hover:border-hp-cyan transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="text-3xl font-extrabold text-hp-light group-hover:text-hp-cyan/25 transition-colors">02</span>
+                            <div class="w-12 h-12 rounded-xl bg-hp-light text-hp-navy flex items-center justify-center group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                                <i data-lucide="git-merge" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-3">Quy trình đào tạo</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Nhu cầu đào tạo (QT.04)</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Chương trình đào tạo</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Tổ chức, quản lý lớp & Hồ sơ</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pillar 03 -->
+                    <div class="rounded-2xl p-6 bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover hover:border-hp-cyan transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="text-3xl font-extrabold text-hp-light group-hover:text-hp-cyan/25 transition-colors">03</span>
+                            <div class="w-12 h-12 rounded-xl bg-hp-light text-hp-navy flex items-center justify-center group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                                <i data-lucide="award" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-3">Năng lực & Nhân sự</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Đánh giá Khung năng lực</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Theo dõi kết quả đánh giá</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Dữ liệu phát triển nhân lực</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pillar 04 -->
+                    <div class="rounded-2xl p-6 bg-white border border-slate-200/90 shadow-card hover:shadow-card-hover hover:border-hp-cyan transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="text-3xl font-extrabold text-hp-light group-hover:text-hp-cyan/25 transition-colors">04</span>
+                            <div class="w-12 h-12 rounded-xl bg-hp-light text-hp-navy flex items-center justify-center group-hover:bg-hp-navy group-hover:text-white transition-colors">
+                                <i data-lucide="pie-chart" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 mb-3">Thống kê, khai thác dữ liệu</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Thống kê hoạt động đào tạo</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Tổng hợp kết quả học tập</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-hp-cyan"></span>Báo cáo phục vụ quản trị</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CHƯƠNG 02: KẾT NỐI MẮT XÍCH & BẢN ĐỒ 07 PHÂN HỆ (TRANG 7-9) ==================== -->
+    <section id="chuong-2" data-chapter="2" class="chapter-section py-20 md:py-28 bg-hp-surface bg-light-grid border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="max-w-3xl mb-14">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-hp-navy text-white text-xs font-bold uppercase tracking-wider mb-3">
+                    <span>Chương 02</span>
+                    <span>•</span>
+                    <span>Kiến trúc Nghiệp vụ</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Một nền tảng kết nối các mắt xích của công tác đào tạo
+                </h2>
+                <p class="text-slate-600 text-base sm:text-lg mt-3 leading-relaxed">
+                    Giá trị nằm ở việc liên kết nghiệp vụ và dữ liệu xuyên suốt vòng đời đào tạo, không chỉ ở số lượng chức năng đơn lẻ.
+                </p>
+            </div>
+
+            <!-- 2.1 Giá trị mang lại cho 4 nhóm đối tượng -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+                <div class="bg-white rounded-2xl p-6 shadow-card border-t-4 border-t-hp-navy">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-hp-light text-hp-navy font-extrabold text-xs">01</span>
+                        <h3 class="font-bold text-slate-900">Đối với Lãnh đạo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Có dữ liệu tổng hợp trực quan để theo dõi tiến độ, kết quả đào tạo toàn công ty; hỗ trợ kiểm soát và ra quyết định kịp thời.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-card border-t-4 border-t-hp-blue">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-hp-light text-hp-blue font-extrabold text-xs">02</span>
+                        <h3 class="font-bold text-slate-900">Đối với Phòng Nhân sự</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Chuẩn hóa quy trình nghiệp vụ, theo dõi khép kín từ nhu cầu đến hồ sơ đào tạo, giảm tối đa công sức tổng hợp thủ công.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-card border-t-4 border-t-hp-cyan">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-hp-light text-hp-navy font-extrabold text-xs">03</span>
+                        <h3 class="font-bold text-slate-900">Đối với Đơn vị, Người học</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Chủ động lập nhu cầu đào tạo; dễ dàng tiếp cận lớp học, tài liệu số, lịch sử học tập và kết quả thi trên một nền tảng.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-card border-t-4 border-t-emerald-500">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold text-xs">04</span>
+                        <h3 class="font-bold text-slate-900">Ký duyệt Online</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Kết nối liền mạch các bước lập, trình, thẩm định và phê duyệt; minh bạch trạng thái xử lý, hạn chế hồ sơ giấy tờ.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2.2 Interactive Explorer: Bản đồ hệ thống 07 Phân hệ - 28 Chức năng -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-slate-200/90 mb-16">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-hp-cyan uppercase tracking-wider mb-1">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            <span>Bản đồ chức năng thực tế</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">
+                            07 Phân hệ · 28 Chức năng dùng chung dữ liệu
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-hp-surface px-4 py-2 rounded-xl border border-slate-200">
+                        <i data-lucide="key-round" class="w-4 h-4 text-hp-navy"></i>
+                        <span>Single Sign-On & Phân quyền chặt chẽ theo vai trò</span>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 mt-8 items-start">
+                    <!-- Left Sidebar Menu Simulator (7 Modules) -->
+                    <div class="lg:col-span-5 space-y-2" id="subsystem-list">
+                        <!-- Rendered via JS -->
+                    </div>
+
+                    <!-- Right Detail Card for Selected Subsystem -->
+                    <div class="lg:col-span-7 bg-hp-surface rounded-2xl p-6 sm:p-8 border border-slate-200/80 min-h-[340px] flex flex-col justify-between" id="subsystem-detail">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.3 Luồng nghiệp vụ trọng tâm: 5 Bước liên thông -->
+            <div class="bg-gradient-to-br from-hp-dark via-hp-navy to-hp-blue rounded-3xl p-6 sm:p-10 text-white shadow-xl">
+                <div class="max-w-3xl mb-8">
+                    <span class="text-xs font-bold text-hp-cyan uppercase tracking-widest">Trục nghiệp vụ chính</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold mt-1">Luồng nghiệp vụ trọng tâm: Từ nhu cầu đến hồ sơ đào tạo</h3>
+                    <p class="text-blue-200 text-sm sm:text-base mt-1">Mỗi bước tạo đầu vào chuẩn hóa cho bước tiếp theo và lưu vết dữ liệu phục vụ tra cứu.</p>
+                </div>
+
+                <!-- 5 Connected Steps -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+                    <!-- Step 1 -->
+                    <div class="glass-dark rounded-2xl p-5 relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 rounded bg-hp-cyan text-hp-dark font-extrabold text-xs">BƯỚC 01</span>
+                                <i data-lucide="folder-kanban" class="w-5 h-5 text-hp-cyan"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-white mb-2">Nội dung đào tạo</h4>
+                            <p class="text-xs text-blue-100/90 leading-relaxed">Kho nội dung chuẩn hóa theo lĩnh vực, liên kết trực tiếp với vị trí Khung năng lực.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-hp-cyan font-semibold">Đầu vào chuẩn hóa</div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="glass-dark rounded-2xl p-5 relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 rounded bg-hp-cyan text-hp-dark font-extrabold text-xs">BƯỚC 02</span>
+                                <i data-lucide="file-signature" class="w-5 h-5 text-hp-cyan"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-white mb-2">Nhu cầu đào tạo</h4>
+                            <p class="text-xs text-blue-100/90 leading-relaxed">Đơn vị lập nhu cầu theo quy trình <strong class="text-white">QT.04</strong>, trình ký duyệt điện tử trên hệ thống.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-hp-cyan font-semibold">Phê duyệt theo QT.04</div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="glass-dark rounded-2xl p-5 relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 rounded bg-hp-cyan text-hp-dark font-extrabold text-xs">BƯỚC 03</span>
+                                <i data-lucide="book-copy" class="w-5 h-5 text-hp-cyan"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-white mb-2">Chương trình đào tạo</h4>
+                            <p class="text-xs text-blue-100/90 leading-relaxed">Khai báo hình thức học, tài liệu, video bài giảng, bộ đề thi và trình phê duyệt.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-hp-cyan font-semibold">Cấu hình học liệu & đề</div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="glass-dark rounded-2xl p-5 relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 rounded bg-hp-cyan text-hp-dark font-extrabold text-xs">BƯỚC 04</span>
+                                <i data-lucide="users-round" class="w-5 h-5 text-hp-cyan"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-white mb-2">Tổ chức, quản lý lớp</h4>
+                            <p class="text-xs text-blue-100/90 leading-relaxed">Chọn học viên, giảng viên, xếp lịch học; theo dõi tiến độ tham gia và kết quả thi.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-hp-cyan font-semibold">Vận hành lớp học</div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="glass-dark rounded-2xl p-5 relative flex flex-col justify-between border-hp-cyan/50">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 rounded bg-emerald-400 text-hp-dark font-extrabold text-xs">BƯỚC 05</span>
+                                <i data-lucide="archive" class="w-5 h-5 text-emerald-400"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-white mb-2">Hồ sơ đào tạo</h4>
+                            <p class="text-xs text-blue-100/90 leading-relaxed">Cập nhật kết quả, minh chứng khóa học; nộp, kiểm tra và lưu trữ hồ sơ số tập trung.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-emerald-300 font-semibold">Đầu ra dữ liệu số</div>
+                    </div>
+                </div>
+
+                <!-- Role Flow Footer -->
+                <div class="mt-6 pt-5 border-t border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm text-blue-100">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-bold text-hp-cyan">Luồng phối hợp:</span>
+                        <span class="px-2.5 py-1 rounded bg-white/10">Người lập, đơn vị</span>
+                        <span>→</span>
+                        <span class="px-2.5 py-1 rounded bg-white/10">Cấp quản lý phê duyệt</span>
+                        <span>→</span>
+                        <span class="px-2.5 py-1 rounded bg-white/10">Phòng Nhân sự</span>
+                        <span>→</span>
+                        <span class="px-2.5 py-1 rounded bg-white/10">Giảng viên, học viên</span>
+                    </div>
+                    <div class="text-emerald-300 font-medium">✓ Minh chứng lưu tập trung, sẵn sàng thống kê</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CHƯƠNG 03: VẬN HÀNH ĐÀO TẠO & TRẢI NGHIỆM ĐA NỀN TẢNG (TRANG 10-13) ==================== -->
+    <section id="chuong-3" data-chapter="3" class="chapter-section py-20 md:py-28 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="max-w-3xl mb-14">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-hp-light text-hp-navy text-xs font-bold uppercase tracking-wider mb-3">
+                    <span>Chương 03</span>
+                    <span>•</span>
+                    <span>Vận hành & Trải nghiệm</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Đa phương thức đào tạo & Trải nghiệm xuyên suốt từ Web đến Mobile
+                </h2>
+                <p class="text-slate-600 text-base sm:text-lg mt-3 leading-relaxed">
+                    E-Learning là một phương thức cốt lõi trong tổng thể hoạt động đào tạo đa dạng, đồng bộ dữ liệu trên cả máy tính và thiết bị di động.
+                </p>
+            </div>
+
+            <!-- 3.1 4 Phương thức tổ chức đào tạo & Quy trình Kiểm tra Đánh giá -->
+            <div class="grid lg:grid-cols-12 gap-8 mb-16">
+                <!-- Left: 4 Training Methods -->
+                <div class="lg:col-span-7 bg-hp-surface rounded-3xl p-6 sm:p-8 border border-slate-200/80">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="layers-3" class="w-5 h-5 text-hp-navy"></i>
+                        <span>04 Phương thức tổ chức đào tạo trên một chương trình</span>
+                    </h3>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-hp-navy text-white text-xs font-bold flex items-center justify-center">01</span>
+                                <h4 class="font-bold text-slate-900">E-Learning trực tuyến</h4>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Học trực tuyến mọi lúc trên hệ thống qua tài liệu số, video streaming và làm bài kiểm tra trắc nghiệm.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-hp-blue text-white text-xs font-bold flex items-center justify-center">02</span>
+                                <h4 class="font-bold text-slate-900">Tập trung trực tiếp</h4>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Tổ chức lớp tại địa điểm đào tạo; quản lý lịch học, điểm danh, giảng viên và học viên tập trung.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-hp-cyan text-hp-dark text-xs font-bold flex items-center justify-center">03</span>
+                                <h4 class="font-bold text-slate-900">Hội thảo, chia sẻ</h4>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Ghi nhận các hoạt động hội thảo chuyên đề, trao đổi kỹ thuật và chia sẻ kinh nghiệm thực tiễn.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">04</span>
+                                <h4 class="font-bold text-slate-900">Kèm cặp, chỉ dẫn</h4>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Hướng dẫn thực hành tại hiện trường/nhà máy, gắn chặt với nội dung công việc và người hướng dẫn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Exam & Assessment Pipeline -->
+                <div class="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border-2 border-hp-navy/15 shadow-card flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <i data-lucide="file-check-2" class="w-5 h-5 text-hp-cyan"></i>
+                            <span>Kiểm tra & Đánh giá tập trung</span>
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">Cấu hình linh hoạt thang điểm, thời gian làm bài và điều kiện đạt theo quy định từng khóa học.</p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-hp-surface">
+                                <div class="w-8 h-8 rounded-lg bg-hp-navy text-white font-bold text-sm flex items-center justify-center shrink-0">1</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900">Ngân hàng câu hỏi (24.463+ câu)</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">Tạo mới, phân loại, tìm kiếm và chỉnh sửa câu hỏi theo từng khóa học/lĩnh vực.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-hp-surface">
+                                <div class="w-8 h-8 rounded-lg bg-hp-blue text-white font-bold text-sm flex items-center justify-center shrink-0">2</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900">Ngân hàng đề thi (1.967+ đề)</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">Tạo đề theo mã, tên, thời gian thi, số lượng câu; trích xuất ngẫu nhiên từ ngân hàng.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-hp-surface">
+                                <div class="w-8 h-8 rounded-lg bg-hp-cyan text-hp-dark font-bold text-sm flex items-center justify-center shrink-0">3</div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900">Tổ chức đánh giá & Chấm điểm</h4>
+                                    <p class="text-xs text-slate-600 mt-0.5">Gắn bộ đề vào chương trình/lớp học; tự động chấm điểm và lưu vết lịch sử thi.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between">
+                        <span>Hỗ trợ thi Online & Nhập điểm thi giấy</span>
+                        <span class="font-bold text-hp-navy">Minh bạch 100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.2 Interactive UI Mockup Switcher: Trải nghiệm giao diện thực tế HPDQ -->
+            <div class="bg-slate-900 rounded-3xl p-4 sm:p-8 shadow-2xl border border-slate-800">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                    <div>
+                        <span class="text-xs font-bold text-hp-cyan uppercase tracking-widest">Interactive UI Simulator</span>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-1">Mô phỏng Giao diện Hệ thống Thực tế HPDQ</h3>
+                    </div>
+
+                    <!-- Switcher Tabs -->
+                    <div class="flex flex-wrap gap-2 bg-slate-800/90 p-1.5 rounded-xl">
+                        <button onclick="switchMockupTab('portal')" id="tab-btn-portal" class="mockup-tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-hp-cyan text-hp-dark shadow transition flex items-center gap-2">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            <span>1. Web Portal & Cá nhân</span>
+                        </button>
+                        <button onclick="switchMockupTab('knl')" id="tab-btn-knl" class="mockup-tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                            <i data-lucide="table-2" class="w-4 h-4"></i>
+                            <span>2. Đánh giá Khung Năng Lực</span>
+                        </button>
+                        <button onclick="switchMockupTab('mobile')" id="tab-btn-mobile" class="mockup-tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                            <i data-lucide="smartphone" class="w-4 h-4"></i>
+                            <span>3. Mobile App (iOS/Android)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MOCKUP TAB 1: WEB PORTAL & PERSONAL DASHBOARD -->
+                <div id="mockup-panel-portal" class="mockup-panel mt-6 tab-content">
+                    <div class="bg-[#F0F4F8] rounded-2xl overflow-hidden border border-slate-700 text-slate-800 shadow-inner">
+                        <!-- Top App Header -->
+                        <div class="bg-white px-4 sm:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="font-extrabold text-hp-navy text-sm sm:text-base tracking-tight">HÒA PHÁT <span class="text-hp-cyan font-bold">GANG THÉP</span></span>
+                                <span class="hidden md:inline-block h-4 w-[1px] bg-slate-300"></span>
+                                <span class="hidden md:inline-block text-xs font-extrabold text-hp-navy tracking-widest">TRI THỨC LÀ SỨC MẠNH</span>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-full bg-hp-navy text-white text-xs font-bold flex items-center justify-center">ĐT</div>
+                                <span class="text-xs font-semibold text-slate-700">Đinh Quang Trãi · HPDQ26796</span>
+                            </div>
+                        </div>
+
+                        <!-- Portal Body -->
+                        <div class="p-4 sm:p-6 space-y-5">
+                            <!-- Hero Banner inside Portal -->
+                            <div class="rounded-xl bg-gradient-to-r from-hp-navy via-hp-blue to-sky-600 p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow">
+                                <div>
+                                    <span class="text-[11px] font-bold uppercase tracking-widest text-sky-200">Cổng thông tin đào tạo nội bộ</span>
+                                    <h4 class="text-xl sm:text-2xl font-extrabold mt-0.5 tracking-tight">TỰ HÀO NGƯỜI HÒA PHÁT</h4>
+                                    <p class="text-xs sm:text-sm text-sky-100 mt-1">Chung một niềm tin – Cùng kiến tạo tương lai</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1.5 rounded-lg bg-white/15 text-xs font-bold">4 Lớp đang mở</span>
+                                    <span class="px-3 py-1.5 rounded-lg bg-emerald-500/30 border border-emerald-300/40 text-xs font-bold">9/9 QT/HD Hoàn thành</span>
+                                    <span class="px-3 py-1.5 rounded-lg bg-sky-400/30 border border-sky-200/40 text-xs font-bold">12/12 Nội quy LĐ</span>
+                                </div>
+                            </div>
+
+                            <!-- Two Columns: Learning History Table & Competency Donut -->
+                            <div class="grid lg:grid-cols-12 gap-5">
+                                <!-- Learning History -->
+                                <div class="lg:col-span-7 bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h5 class="text-xs font-extrabold text-hp-navy uppercase tracking-wider">Lịch sử học tập gần nhất</h5>
+                                        <span class="text-[11px] text-slate-400">Tổng số lớp tham gia: 10</span>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left border-collapse text-xs">
+                                            <thead>
+                                                <tr class="border-b border-slate-200 text-slate-500">
+                                                    <th class="py-2 font-semibold">Tên lớp học</th>
+                                                    <th class="py-2 font-semibold">Ngày tham gia</th>
+                                                    <th class="py-2 font-semibold text-right">Kết quả</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                <tr>
+                                                    <td class="py-2.5 font-medium text-slate-800">P.NS - Lập kế hoạch - T11.24</td>
+                                                    <td class="py-2.5 text-slate-500">Chưa tham gia</td>
+                                                    <td class="py-2.5 text-right"><span class="text-rose-600 font-semibold">Chưa hoàn thành</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2.5 font-medium text-slate-800">QT.16 - P.NS - T10.24</td>
+                                                    <td class="py-2.5 text-slate-500">11/11/2024</td>
+                                                    <td class="py-2.5 text-right"><span class="text-emerald-600 font-semibold">Đã hoàn thành</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2.5 font-medium text-slate-800">Làm việc nhóm - P.NS - T9.2024</td>
+                                                    <td class="py-2.5 text-slate-500">15/10/2024</td>
+                                                    <td class="py-2.5 text-right"><span class="text-emerald-600 font-semibold">Đã hoàn thành</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2.5 font-medium text-slate-800">KN giải quyết vấn đề - T7-P.NS</td>
+                                                    <td class="py-2.5 text-slate-500">26/07/2024</td>
+                                                    <td class="py-2.5 text-right"><span class="text-emerald-600 font-semibold">Đã hoàn thành</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-2.5 font-medium text-slate-800">P.NS - Đạo đức nghề nghiệp T3.24</td>
+                                                    <td class="py-2.5 text-slate-500">03/04/2024</td>
+                                                    <td class="py-2.5 text-right"><span class="text-emerald-600 font-semibold">Đã hoàn thành</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Competency Donut Card -->
+                                <div class="lg:col-span-5 bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                                    <h5 class="text-xs font-extrabold text-hp-navy uppercase tracking-wider mb-2 text-center">Kết quả đánh giá Khung năng lực gần nhất</h5>
+                                    <div class="relative w-44 h-44 mx-auto my-2">
+                                        <canvas id="knlDonutChart"></canvas>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                            <span class="text-[11px] text-slate-500 font-medium">Tổng năng lực</span>
+                                            <span class="text-2xl font-extrabold text-slate-900">34</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-center text-xs pt-2 border-t border-slate-100">
+                                        <div class="p-1.5 rounded bg-sky-50">
+                                            <div class="font-extrabold text-sky-600">20</div>
+                                            <div class="text-[11px] text-slate-600">Đạt</div>
+                                        </div>
+                                        <div class="p-1.5 rounded bg-emerald-50">
+                                            <div class="font-extrabold text-emerald-600">11</div>
+                                            <div class="text-[11px] text-slate-600">Vượt</div>
+                                        </div>
+                                        <div class="p-1.5 rounded bg-indigo-50">
+                                            <div class="font-extrabold text-indigo-600">03</div>
+                                            <div class="text-[11px] text-slate-600">Không đạt</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
